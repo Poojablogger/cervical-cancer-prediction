@@ -1,0 +1,138 @@
+/* ---------- GLOBAL BACKGROUND ---------- */
+
+body{
+background: linear-gradient(135deg,#f42187,#f3258f,hsl(336, 96%, 58%),,#f42187);
+font-family: 'Segoe UI', sans-serif;
+}
+
+
+/* ---------- MAIN BANNER ---------- */
+
+.banner{
+background: linear-gradient(90deg,#ff4da6,#ff1a8c);
+padding:22px;
+border-radius:18px;
+text-align:center;
+color:white;
+font-size:30px;
+font-weight:bold;
+margin-bottom:30px;
+box-shadow:0px 8px 25px rgba(0,0,0,0.15);
+}
+
+
+/* ---------- CARD DESIGN ---------- */
+
+.card{
+background: rgba(255,255,255,0.9);
+backdrop-filter: blur(10px);
+padding:25px;
+border-radius:18px;
+box-shadow:0px 8px 25px rgba(0,0,0,0.1);
+text-align:center;
+border-top:6px solid #ff3399;
+transition: transform 0.3s ease;
+}
+
+.card:hover{
+transform: translateY(-6px);
+}
+
+
+/* ---------- METRIC BOX ---------- */
+
+.metric{
+background:white;
+padding:20px;
+border-radius:16px;
+text-align:center;
+box-shadow:0px 8px 25px rgba(0,0,0,0.1);
+border-left:6px solid #ff3399;
+}
+
+
+/* ---------- BUTTONS ---------- */
+
+.stButton>button{
+background: linear-gradient(90deg,#ff3399,#ff66b3);
+color:white;
+border-radius:12px;
+height:48px;
+width:230px;
+font-size:16px;
+font-weight:600;
+border:none;
+transition: all 0.3s ease;
+}
+
+.stButton>button:hover{
+background: linear-gradient(90deg,#ff1a8c,#ff4da6);
+transform: scale(1.05);
+}
+
+
+/* ---------- INPUT BOXES ---------- */
+
+.stNumberInput input{
+background:white !important;
+color:black !important;
+border:2px solid #ff99cc !important;
+border-radius:8px !important;
+}
+
+.stNumberInput input:focus{
+border:2px solid #ff3399 !important;
+box-shadow:0 0 5px #ff3399;
+}
+
+
+/* ---------- SELECT BOX ---------- */
+
+.stSelectbox div[data-baseweb="select"] > div{
+background:white !important;
+color:black !important;
+border:2px solid #ff99cc !important;
+border-radius:8px;
+}
+
+.stSelectbox div[data-baseweb="select"] > div:hover{
+border:2px solid #ff3399 !important;
+}
+
+
+/* ---------- SLIDER ---------- */
+
+.stSlider > div{
+color:#ff3399;
+}
+
+
+/* ---------- PROGRESS BAR ---------- */
+
+.stProgress > div > div > div{
+background:#ff3399;
+}
+
+
+/* ---------- SIDEBAR ---------- */
+
+section[data-testid="stSidebar"]{
+background: linear-gradient(180deg,#ffe6f2,#ffd6eb);
+}
+
+
+/* ---------- DATA TABLE ---------- */
+
+.stDataFrame{
+border-radius:12px;
+overflow:hidden;
+box-shadow:0px 6px 20px rgba(0,0,0,0.1);
+}
+
+
+/* ---------- IMAGE STYLE ---------- */
+
+img{
+border-radius:12px;
+box-shadow:0px 6px 20px rgba(0,0,0,0.15);
+}
