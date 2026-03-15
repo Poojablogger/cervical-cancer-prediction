@@ -422,12 +422,8 @@ elif menu == "Prediction":
             stress
         ]])
 
-        # Apply RFE feature selection
-        input_data = rfe.transform(input_data)
-
-        # Model prediction
+        # Model prediction (RFE transform skipped for deployment)
         prediction = model.predict_proba(input_data)[0][1]
-
         risk_percentage = prediction * 100
 
         st.session_state.prediction_done = True
