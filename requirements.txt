@@ -6,3 +6,4 @@ xgboost
 matplotlib
 shap
 reportlab
+imbalanced-learn
