@@ -1,9 +1,9 @@
-streamlit
+streamlit==1.55.0
 pandas
 numpy
-scikit-learn
-xgboost
 matplotlib
-shap
-reportlab
+scikit-learn==1.6.1
+xgboost
 imbalanced-learn
+reportlab
+openpyxl
