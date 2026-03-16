@@ -380,6 +380,7 @@ elif menu == "Logout":
     st.success("Logged Out Successfully")
 
 # ---------------- PREDICTION ----------------
+# ---------------- PREDICTION ----------------
 elif menu == "Prediction":
 
     if not st.session_state.logged_in:
@@ -404,48 +405,41 @@ elif menu == "Prediction":
 
     if st.button("Predict Risk"):
 
-        smoke_val = 5 if smoke == "Yes" else 0
+        smoke_val = 1 if smoke == "Yes" else 0
 
-       import pandas as pd
+        # ---- Create Input DataFrame ----
+        input_data = pd.DataFrame([[
+            age,
+            partners,
+            first_sex,
+            pregnancies,
+            smoke_val,
+            hormonal,
+            iud,
+            hinselmann,
+            schiller,
+            citology,
+            lifetime,
+            cancer_load,
+            stress
+        ]], columns=[
+            "Age",
+            "Partners",
+            "First_sex",
+            "Pregnancies",
+            "Smoke",
+            "Hormonal",
+            "IUD",
+            "Hinselmann",
+            "Schiller",
+            "Citology",
+            "Lifetime",
+            "Cancer_Load",
+            "Stress"
+        ])
 
-input_data = pd.DataFrame([[
-age,
-partners,
-first_sex,
-pregnancies,
-smoke_val,
-hormonal,
-iud,
-hinselmann,
-schiller,
-citology,
-lifetime,
-cancer_load,
-stress
-]], columns=[
-"Age",
-"Partners",
-"First_sex",
-"Pregnancies",
-"Smoke",
-"Hormonal",
-"IUD",
-"Hinselmann",
-"Schiller",
-"Citology",
-"Lifetime",
-"Cancer_Load",
-"Stress"
-])
-
-prediction = model.predict_proba(input_data)[0][1]
-
-risk_percentage = prediction * 100
-
-        
-        # Model prediction
+        # ---- Model Prediction ----
         prediction = model.predict_proba(input_data)[0][1]
-
         risk_percentage = prediction * 100
 
         st.session_state.prediction_done = True
@@ -459,6 +453,7 @@ risk_percentage = prediction * 100
 
         st.progress(int(risk_percentage))
 
+        # ---- Risk Category ----
         if risk_percentage < 30:
             risk_label = "Low"
             st.success("Low Risk")
@@ -470,7 +465,8 @@ risk_percentage = prediction * 100
         else:
             risk_label = "High"
             st.error("High Risk")
-        # -------- SAVE RESULT --------
+
+        # ---- Save Result ----
         st.session_state.results.append({
             "User": st.session_state.current_user,
             "Risk": risk_label,
