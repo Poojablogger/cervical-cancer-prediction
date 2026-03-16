@@ -7,3 +7,4 @@ matplotlib
 seaborn
 Pillow
 reportlab
+imbalanced-learn
