@@ -422,9 +422,7 @@ elif menu == "Prediction":
             stress
         ]])
 
-        # Apply RFE transform
-        input_data = rfe.transform(input_data)
-
+        
         # Model prediction
         prediction = model.predict_proba(input_data)[0][1]
 
