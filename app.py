@@ -406,7 +406,7 @@ elif menu == "Prediction":
 
         smoke_val = 5 if smoke == "Yes" else 0
 
-        input_data = np.array([[
+        input_data = pd.DataFrame([[
             age,
             partners,
             first_sex,
@@ -422,8 +422,12 @@ elif menu == "Prediction":
             stress
         ]])
 
-        # Model prediction (RFE transform skipped for deployment)
+        # Apply RFE transform
+        input_data = rfe.transform(input_data)
+
+        # Model prediction
         prediction = model.predict_proba(input_data)[0][1]
+
         risk_percentage = prediction * 100
 
         st.session_state.prediction_done = True
@@ -448,7 +452,6 @@ elif menu == "Prediction":
         else:
             risk_label = "High"
             st.error("High Risk")
-
         # -------- SAVE RESULT --------
         st.session_state.results.append({
             "User": st.session_state.current_user,
