@@ -388,7 +388,7 @@ elif menu == "Prediction":
 
     st.title("👩‍⚕ Cervical Cancer Risk Prediction")
 
-    age = st.number_input("Age", 18, 80)
+    age = st.number_input("Age", 0, 80)
     partners = st.number_input("Number of Partners", 0, 20)
     first_sex = st.number_input("Age at First Intercourse", 10, 50)
     pregnancies = st.number_input("Number of Pregnancies", 0, 10)
