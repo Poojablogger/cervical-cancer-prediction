@@ -406,21 +406,41 @@ elif menu == "Prediction":
 
         smoke_val = 5 if smoke == "Yes" else 0
 
-        input_data = pd.DataFrame([[
-            age,
-            partners,
-            first_sex,
-            pregnancies,
-            smoke_val,
-            hormonal,
-            iud,
-            hinselmann,
-            schiller,
-            citology,
-            lifetime,
-            cancer_load,
-            stress
-        ]])
+       import pandas as pd
+
+input_data = pd.DataFrame([[
+age,
+partners,
+first_sex,
+pregnancies,
+smoke_val,
+hormonal,
+iud,
+hinselmann,
+schiller,
+citology,
+lifetime,
+cancer_load,
+stress
+]], columns=[
+"Age",
+"Partners",
+"First_sex",
+"Pregnancies",
+"Smoke",
+"Hormonal",
+"IUD",
+"Hinselmann",
+"Schiller",
+"Citology",
+"Lifetime",
+"Cancer_Load",
+"Stress"
+])
+
+prediction = model.predict_proba(input_data)[0][1]
+
+risk_percentage = prediction * 100
 
         
         # Model prediction
