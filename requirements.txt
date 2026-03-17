@@ -3,7 +3,8 @@ pandas
 numpy
 scikit-learn
 xgboost
-imbalanced-learn
 matplotlib
+shap
 reportlab
-Pillow
+imbalanced-learn
+openpyxl
