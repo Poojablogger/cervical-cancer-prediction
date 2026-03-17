@@ -380,7 +380,6 @@ elif menu == "Logout":
     st.success("Logged Out Successfully")
 
 # ---------------- PREDICTION ----------------
-# ---------------- PREDICTION ----------------
 elif menu == "Prediction":
 
     if not st.session_state.logged_in:
@@ -391,7 +390,7 @@ elif menu == "Prediction":
 
     age = st.number_input("Age", 0, 80)
     partners = st.number_input("Number of Partners", 0, 20)
-    first_sex = st.number_input("Age at First Intercourse", 10, 50)
+    first_sex = st.number_input("Age at First Intercourse", 0, 50)
     pregnancies = st.number_input("Number of Pregnancies", 0, 10)
     smoke = st.selectbox("Do you Smoke?", ["Yes", "No"])
     hormonal = st.number_input("Years of Hormonal Contraceptives", 0, 20)
@@ -400,46 +399,66 @@ elif menu == "Prediction":
     schiller = st.number_input("Schiller Test Result (0 or 1)", 0, 1)
     citology = st.number_input("Citology Test Result (0 or 1)", 0, 1)
     lifetime = st.number_input("Lifetime Exposure Index", 0, 50)
-    cancer_load = st.number_input("Family Cancer History Level (0-5)", 0, 5)
+    cancer_history = st.selectbox("Family Cancer History", ["Yes", "No"])
     stress = st.number_input("Stress Level (1-10)", 1, 10)
 
     if st.button("Predict Risk"):
 
         smoke_val = 1 if smoke == "Yes" else 0
 
-        # ---- Create Input DataFrame ----
-        input_data = pd.DataFrame([[
-            age,
-            partners,
-            first_sex,
-            pregnancies,
-            smoke_val,
-            hormonal,
-            iud,
-            hinselmann,
-            schiller,
-            citology,
-            lifetime,
-            cancer_load,
-            stress
-        ]], columns=[
-            "Age",
-            "Partners",
-            "First_sex",
-            "Pregnancies",
-            "Smoke",
-            "Hormonal",
-            "IUD",
-            "Hinselmann",
-            "Schiller",
-            "Citology",
-            "Lifetime",
-            "Cancer_Load",
-            "Stress"
-        ])
+        # Build a full feature vector matching the model's original training features.
+        # Missing fields (e.g., STD history, diagnoses) are set to 0 by default.
+        feature_values = {
+            "Age": age,
+            "Number of sexual partners": partners,
+            "First sexual intercourse": first_sex,
+            "Num of pregnancies": pregnancies,
+            "Smokes": smoke_val,
+            # Estimated defaults for more detailed smoking fields
+            "Smokes (years)": 0,
+            "Smokes (packs/year)": 0,
+            "Hormonal Contraceptives": 1 if hormonal > 0 else 0,
+            "Hormonal Contraceptives (years)": hormonal,
+            "IUD": 1 if iud > 0 else 0,
+            "IUD (years)": iud,
+            # STD-related features (not captured via UI) default to 0
+            "STDs": 0,
+            "STDs (number)": 0,
+            "STDs:condylomatosis": 0,
+            "STDs:cervical condylomatosis": 0,
+            "STDs:vaginal condylomatosis": 0,
+            "STDs:vulvo-perineal condylomatosis": 0,
+            "STDs:syphilis": 0,
+            "STDs:pelvic inflammatory disease": 0,
+            "STDs:genital herpes": 0,
+            "STDs:molluscum contagiosum": 0,
+            "STDs:AIDS": 0,
+            "STDs:HIV": 0,
+            "STDs:Hepatitis B": 0,
+            "STDs:HPV": 0,
+            "STDs: Number of diagnosis": 0,
+            "STDs: Time since first diagnosis": 0,
+            "STDs: Time since last diagnosis": 0,
+            # Diagnosis features (not captured via UI) default to 0
+            "Dx:Cancer": 0,
+            "Dx:CIN": 0,
+            "Dx:HPV": 0,
+            "Dx": 0,
+            "Hinselmann": hinselmann,
+            "Schiller": schiller,
+            "Citology": citology,
+            "Lifetime_Exposure_Index": lifetime,
+            "Stress Level": stress,
+        }
 
-        # ---- Model Prediction ----
-        prediction = model.predict_proba(input_data)[0][1]
+        input_data = np.array([[
+            feature_values.get(f, 0) for f in rfe.feature_names_in_
+        ]])
+
+        # Apply RFE feature selection (model expects 10 features)
+        input_data_transformed = rfe.transform(input_data)
+
+        prediction = model.predict_proba(input_data_transformed)[0][1]
         risk_percentage = prediction * 100
 
         st.session_state.prediction_done = True
@@ -453,7 +472,6 @@ elif menu == "Prediction":
 
         st.progress(int(risk_percentage))
 
-        # ---- Risk Category ----
         if risk_percentage < 30:
             risk_label = "Low"
             st.success("Low Risk")
@@ -466,7 +484,7 @@ elif menu == "Prediction":
             risk_label = "High"
             st.error("High Risk")
 
-        # ---- Save Result ----
+        # -------- SAVE RESULT --------
         st.session_state.results.append({
             "User": st.session_state.current_user,
             "Risk": risk_label,
@@ -652,15 +670,31 @@ elif menu == "Analysis":
 
     st.dataframe(df)
 
-    # ---- Excel Download ----
-    excel_file = "prediction_records.xlsx"
-    df.to_excel(excel_file, index=False)
+    # ---- File Download ----
+    try:
+        excel_file = "prediction_records.xlsx"
+        df.to_excel(excel_file, index=False)
 
-    with open(excel_file, "rb") as f:
-        st.download_button(
-            "⬇ Download Excel Report",
-            f,
-            file_name="Cervical_Prediction_Data.xlsx"
+        with open(excel_file, "rb") as f:
+            st.download_button(
+                "⬇ Download Excel Report",
+                f,
+                file_name="Cervical_Prediction_Data.xlsx"
+            )
+    except ImportError:
+        csv_file = "prediction_records.csv"
+        df.to_csv(csv_file, index=False)
+
+        with open(csv_file, "rb") as f:
+            st.download_button(
+                "⬇ Download CSV Report",
+                f,
+                file_name="Cervical_Prediction_Data.csv"
+            )
+
+        st.warning(
+            "openpyxl is not installed, so the report is available as CSV. "
+            "Install openpyxl to enable Excel downloads."
         )
 # ---------------- FOOTER ----------------
 st.markdown("---")
