@@ -36,16 +36,16 @@ if "current_user" not in st.session_state:
 
 if "results" not in st.session_state:
     st.session_state.results = [
-        {"User":"Anita","Risk":"Low","Time":"10:00"},
-        {"User":"Priya","Risk":"Medium","Time":"11:10"},
-        {"User":"Divya","Risk":"Low","Time":"6:20"},
-        {"User":"Meena","Risk":"High","Time":"10:30"},
-        {"User":"Kavya","Risk":"Medium","Time":"10:40"},
-        {"User":"Nisha","Risk":"Low","Time":"12:50"},
-        {"User":"Latha","Risk":"Medium","Time":"11:00"},
-        {"User":"Rekha","Risk":"Low","Time":"11:10"},
-        {"User":"Sangeetha","Risk":"High","Time":"11:20"},
-        {"User":"Deepa","Risk":"Medium","Time":"11:30"}
+        {"User":"01","Risk":"Low","Time":"10:00"},
+        {"User":"02","Risk":"Medium","Time":"11:10"},
+        {"User":"03","Risk":"Low","Time":"6:20"},
+        {"User":"04","Risk":"High","Time":"10:30"},
+        {"User":"05","Risk":"Medium","Time":"10:40"},
+        {"User":"06","Risk":"Low","Time":"12:50"},
+        {"User":"07","Risk":"Medium","Time":"11:00"},
+        {"User":"08","Risk":"Low","Time":"11:10"},
+        {"User":"09","Risk":"High","Time":"11:20"},
+        {"User":"10","Risk":"Medium","Time":"11:30"}
     ]
 if "prediction_done" not in st.session_state:
     st.session_state.prediction_done = False
@@ -398,13 +398,34 @@ elif menu == "Prediction":
     hinselmann = st.number_input("Hinselmann Test Result (0 or 1)", 0, 1)
     schiller = st.number_input("Schiller Test Result (0 or 1)", 0, 1)
     citology = st.number_input("Citology Test Result (0 or 1)", 0, 1)
-    lifetime = st.number_input("Lifetime Exposure Index", 0, 50)
+    periods = st.selectbox("Periods is regular", ["overflow", "irregular","normal","lessflow"])
     cancer_history = st.selectbox("Family Cancer History", ["Yes", "No"])
-    stress = st.number_input("Stress Level (1-10)", 1, 10)
+    cancer_load = st.number_input("Cancer Load Score", 0, 100)
+    stress = st.selectbox("Stress Level", ["High Mobile use", "Less Sleep","High Pressure at Job"])
+    Body_Excercise = st.selectbox("Excercise Level", ["Active", "Moderate", "lazy"])
 
     if st.button("Predict Risk"):
 
         smoke_val = 1 if smoke == "Yes" else 0
+        
+        # Convert categorical string values to numeric values
+        periods_val = 1 if periods == "Yes" else 0
+        
+        # Map stress level to numeric value
+        stress_mapping = {
+            "High Mobile use": 0,
+            "Less Sleep": 1,
+            "High Pressure at Job": 2
+        }
+        stress_val = stress_mapping.get(stress, 0)
+        
+        # Map exercise level to numeric value
+        exercise_mapping = {
+            "Active": 2,
+            "Moderate": 1,
+            "lazy": 0
+        }
+        exercise_val = exercise_mapping.get(Body_Excercise, 0)
 
         # Build a full feature vector matching the model's original training features.
         # Missing fields (e.g., STD history, diagnoses) are set to 0 by default.
@@ -447,8 +468,9 @@ elif menu == "Prediction":
             "Hinselmann": hinselmann,
             "Schiller": schiller,
             "Citology": citology,
-            "Lifetime_Exposure_Index": lifetime,
-            "Stress Level": stress,
+            "periods is regular": periods_val,
+            "Stress Level": stress_val,
+            "Body_Excercise": exercise_val,
         }
 
         input_data = np.array([[
@@ -502,9 +524,10 @@ elif menu == "Prediction":
             "Hinselmann": hinselmann * 10,
             "Schiller": schiller * 10,
             "Citology": citology * 10,
-            "Lifetime Exposure": lifetime * 2,
+            "periods is regular or irregular": periods_val * 2,
             "Cancer Load": cancer_load * 3,
-            "Stress": stress * 2
+            "Stress": stress_val * 2,
+            "Body_Excercise": exercise_val,
         }
 
         fig,ax = plt.subplots()
@@ -522,8 +545,12 @@ elif menu == "Prediction":
         styles = getSampleStyleSheet()
         elements = []
 
-        elements.append(Image("hospital_logo.png", width=120, height=80))
-        elements.append(Spacer(1, 10))
+        # Add cervical cancer illustrative image
+        try:
+            elements.append(Image("cervical.jpg", width=420, height=180))
+            elements.append(Spacer(1, 10))
+        except Exception:
+            pass
 
         elements.append(Paragraph("Cervical Cancer Risk Report", styles["Title"]))
         elements.append(Spacer(1, 10))
@@ -570,10 +597,6 @@ It does not substitute professional medical advice. Please consult a qualified h
 """
         elements.append(Paragraph(disclaimer_text, styles["Normal"]))
         elements.append(Spacer(1, 15))
-
-        # Doctor Signature
-        elements.append(Paragraph("Doctor Approval", styles["Heading3"]))
-        elements.append(Image("doctor_sign.png", width=150, height=70))
 
         doc.build(elements)
 
@@ -707,4 +730,4 @@ unsafe_allow_html=True
 st.markdown(
 '<div class="footer">Developed for Healthcare Risk Analysis</div>',
 unsafe_allow_html=True
-)
+) 
